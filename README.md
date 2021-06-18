@@ -26,7 +26,7 @@ $ source ./venv/bin/activate
 Then you can set the ``FLASK_APP`` and ``FLASK_ENV`` environment variables to point to the application and enable the development mode:
 
 ```
-(venv)$ export FLASK_APP=slr_label;
+(venv)$ export FLASK_APP=slr_label
 (venv)$ export FLASK_ENV=development
 ```
 
