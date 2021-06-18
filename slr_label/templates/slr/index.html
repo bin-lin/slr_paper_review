@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<ul class="nav navbar-nav">
+    <li class="active">
+        <a href="/">Home</a>
+    </li>
+<!--    <li>-->
+<!--        <a href="{{ url_for('slr.add_paper') }}">Add Paper</a>-->
+<!--    </li>-->
+</ul>
+{% endblock %}
+
+{% block content %}
+
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+{% for message in messages %}
+{% if 'Error' in message%}
+<div class="alert alert-dismissible alert-danger">
+{% else %}
+<div class="alert alert-dismissible alert-success">
+    {% endif %}
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <strong>{{ message }}</strong>
+</div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <h3>My Assigned Papers</h3>
+    <p>Click the paper title to enter read-only mode for your review.</p>
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th scope="col">Paper ID</th>
+            <th scope="col">Title</th>
+            <th scope="col">Review</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for paper in my_papers %}
+        <tr>
+            <th scope="row">{{ paper['id'] }}</th>
+            <td><a href="{{ url_for('slr.view_review', paper_id=paper['id']) }}">{{ paper['title'] }}</a></td>
+            <td>
+                <form action="{{ url_for('slr.review_paper') }}" method="post">
+                    <input type="hidden" id="paper_id" name="paper_id" value="{{ paper['id'] }}">
+                    {% if paper['has_review'] == 1 %}
+                    <button type="submit" class="btn btn-success btn-sm">Edit Review</button>
+                    {% else %}
+                    <button type="submit" class="btn btn-primary btn-sm">Add Review</button>
+                    {% endif %}
+
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+
+    {% endblock %}

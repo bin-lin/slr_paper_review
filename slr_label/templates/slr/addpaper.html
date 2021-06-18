@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<ul class="nav navbar-nav">
+    <li>
+        <a href="/">Home</a>
+    </li>
+    <li class="active">
+        <a href="{{ url_for('slr.add_paper') }}">Add Paper</a>
+    </li>
+</ul>
+{% endblock %}
+
+{% block content %}
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-dismissible alert-success">
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+      <strong>{{ message }}</strong>
+    </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+<p>Add new papers for the systematic literature review here. Only "title" and "from paper" are mandatory.
+    The "Title" field is also used for filtering the paper table below. The filtering is applied to all columns,
+    which means if you want to filter the paper table with DOI, you can also put DOI value into the "title".</p>
+
+<form method="POST" class="form-horizontal" action="{{ url_for('slr.add_new_paper') }}">
+    <div class="form-group">
+        <label for="title" class="col-sm-2 control-label">Title (mandatory):</label>
+        <div class="col-sm-10"><input type="text" class="form-control" id="title" name="title" onkeyup="paperFilter()" required></div>
+    </div>
+    <div class="form-group">
+        <label for="authors" class="col-sm-2 control-label">Authors:</label>
+        <div class="col-sm-10"><input type="text" class="form-control" id="authors" name="authors"></div>
+    </div>
+    <div class="form-group">
+        <label for="venue" class="col-sm-2 control-label">Venue:</label>
+        <div class="col-sm-10"><input type="text" class="form-control" id="venue" name="venue"></div>
+    </div>
+    <div class="form-group">
+        <label for="doi" class="col-sm-2 control-label">DOI:</label>
+        <div class="col-sm-10"><input type="text" class="form-control" id="doi" name="doi"></div>
+    </div>
+    <div class="form-group">
+        <label for="doi" class="col-sm-2 control-label">From paper (ID):</label>
+        <div class="col-sm-10"><select class="form-control" id="from_paper" name="from_paper" required>
+            <option value="" selected disabled>Select the paper (ID) from which you can find the new paper</option>
+            {% for paper in my_papers %}
+            <option value="{{ paper }}">{{ paper }}</option>
+            {% endfor %}
+        </select></div>
+    </div>
+    <input type="submit" class="btn btn-primary center-block" value="Add Paper">
+</form>
+
+
+<hr>
+
+<table id="paperTable" class="table table-hover table-light table-striped">
+  <thead>
+  <tr>
+    <th scope="col">Title</th>
+      <th scope="col">Authors</th>
+    <th scope="col">DOI</th>
+  </tr>
+  </thead>
+    <tbody>
+    {% for paper in papers %}
+    <tr>
+    <td>{{ paper.title }}</td>
+    <td>{{ paper.authors }}</td>
+    <td>{{ paper.doi }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<script>
+function paperFilter() {
+  // Declare variables
+  var input, filter, table, tr, titleTd, authorTd, doiTd, i, titleValue, authorValue, doiValue, txtValue;
+  input = document.getElementById("title");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("paperTable");
+  tr = table.getElementsByTagName("tr");
+
+  // Loop through all table rows, and hide those who don't match the search query
+  for (i = 0; i < tr.length; i++) {
+    titleTd = tr[i].getElementsByTagName("td")[0];
+    authorTd = tr[i].getElementsByTagName("td")[1];
+    doiTd = tr[i].getElementsByTagName("td")[2];
+    if (titleTd && authorTd && doiTd) {
+      titleValue = titleTd.textContent || titleTd.innerText;
+      authorValue = authorTd.textContent || authorTd.innerText;
+      doiValue = doiTd.textContent || doiTd.innerText;
+      txtValue = titleValue+authorValue+doiValue;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }
+  }
+}
+</script>
+{% endblock %}

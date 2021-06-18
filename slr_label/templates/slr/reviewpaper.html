@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<ul class="nav navbar-nav">
+    <li>
+        <a href="/">Home</a>
+    </li>
+<!--    <li>-->
+<!--        <a href="{{ url_for('slr.add_paper') }}">Add Paper</a>-->
+<!--    </li>-->
+</ul>
+{% endblock %}
+
+{% block content %}
+<h4>Hi {{ current_user.username }}, nou are now reviewing the following paper.</h4>
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th scope="col">ID</th>
+      <th scope="col">Title</th>
+      <th scope="col">Authors</th>
+        <th scope="col">Venue</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="table-dark">
+      <th scope="row">{{ paper['id'] }}</th>
+      <td>{{ paper['title'] }}</td>
+        <td>{{ paper['authors'] }}</td>
+        <td>{{ paper['venue'] }}</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Link: <a href="{{ paper['doi'] }}" target="_blank">{{ paper['doi'] }}</a> </p>
+
+<hr>
+
+
+<form method="POST" action="{{ url_for('slr.save_review') }}">
+    {% for question in questions %}
+    <div class="form-group">
+      <label for="question{{ question.id }}">{{ question.id }}. {{ question.question }}</label>
+        {% if question.type == 1 %}
+      <textarea class="form-control" id="question{{ question.id }}" name="question{{ question.id }}" rows="3">
+      {% if question.answer %}
+          {{ question.answer }}
+      {% endif %}
+      </textarea>
+        {% else %}
+        <div><select class="form-control" id="question{{ question.id }}" name="question{{ question.id }}" required>
+            <option value="" selected disabled>Select the answer</option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+        </select></div>
+        {% endif %}
+    </div>
+    {% endfor %}
+    <input type="hidden" id="paper_id" name="paper_id" value="{{ paper['id'] }}">
+    <input type="submit" class="btn btn-primary center-block" value="Submit Review">
+</form>
+
+<br>
+{% endblock %}

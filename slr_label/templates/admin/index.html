@@ -1,0 +1,21 @@
+{% extends 'admin/master.html' %}
+{% block head %}
+{% if not current_user.has_role('admin') %}
+<meta http-equiv="Refresh" content="0; url={{ url_for('slr.index') }}" />
+{% endif %}
+{% endblock head %}
+
+{% block body %}
+{{ super() }}
+<div class="container">
+    <div class="row">
+        <div class="col-sm-10 col-sm-offset-1">
+            <h1>SLR Web App</h1>
+            <p class="lead">
+                Welcome to the administration panel of SLR Web App.
+            </p>
+
+        </div>
+    </div>
+</div>
+{% endblock body %}

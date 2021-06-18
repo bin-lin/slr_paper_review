@@ -1,0 +1,11 @@
+version: '3'
+services:
+    web:
+        build: .
+        restart: always
+        ports:
+            - "5051:5000"
+        volumes:
+            - .:/web
+            - ./instance/slr_label.sqlite:/web/instance/slr_label.sqlite
+
